@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { auth } from '../../firebase'; // Import the auth instance from your Firebase setup
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -10,12 +12,30 @@ const LoginScreen = ({ navigation }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [activeTab, setActiveTab] = useState('Login'); 
 
-  const handleLogin = () => {
-    navigation.navigate('Home Screen')
+  // Handle user login
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      Alert.alert('Success', 'Logged in successfully');
+      navigation.navigate('Home Screen');
+    } catch (error) {
+      Alert.alert('Login Failed', error.message);
+    }
   };
 
-  const handleSignUp = () => {
-    // Sign up logic here
+  // Handle user signup
+  const handleSignUp = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      Alert.alert('Success', 'Account created successfully');
+      navigation.navigate('Home Screen');
+    } catch (error) {
+      Alert.alert('Signup Failed', error.message);
+    }
   };
 
   return (

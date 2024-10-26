@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     title:{
-        fontSize: 24,
+        fontSize: 18,
         fontWeight: 'bold'
     },
     main: {
@@ -144,11 +144,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         width: '100%',
         paddingBottom: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginLeft: 20,
     },
     addButton: {
         position: 'absolute',

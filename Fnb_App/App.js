@@ -7,12 +7,14 @@ import ForgotPasswordScreen from './app/screens/ForgotPassword';
 import HomeScreen from './app/screens/HomeScreen';
 import BlogsScreen from './app/screens/Blogs';
 import CreatePost from './app/screens/CreatePost';
+import { AuthProvider } from './Global/AuthContext';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
+    <AuthProvider>
+          <NavigationContainer>
       <Stack.Navigator initialRouteName='Onboarding Screen'>
         <Stack.Screen name="Onboarding Screen" component={OnboardingScreen} options={{headerShown: false}}/>
         <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
@@ -22,5 +24,7 @@ export default function App() {
         <Stack.Screen name='Create Post' component={CreatePost} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
+    </AuthProvider>
+    
   );
 }

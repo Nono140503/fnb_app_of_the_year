@@ -8,11 +8,23 @@ const BlogsScreen = ({ navigation }) => {
             id: '1',
             author: 'John Steysen',
             time: '08:39 am',
+            title: 'Title',
             content: 'Lorem Ipsum Dolor Sit Amet, Consectetur Adipisicing Elit. Fringilla Natoque Id Aenean.',
             image: require('../../assets/Financial-Literacy-for-Academic-Libraries-780-final.png'),
             likes: 1964,
             comments: 135,
             profile_pic: require('../../assets/pexels-creationhill-1681010.jpg'),
+        },
+        {
+            id: '2',
+            author: 'Leah Bezuidenhout',
+            time: '11:39 am',
+            title: 'How to Use Peer-to-Peer Lending for Income',
+            content: "Want to diversify your income? Peer-to-peer (P2P) lending can help! Here's how:\nLend Directly: P2P platforms let you lend directly to borrowers and earn interest.\nSet Goals & Assess Risks: Decide your investment amount and risk tolerance; higher returns often mean higher risk.\nChoose a Platform: Research P2P platforms for fees and loan options that fit your goals.\nReinvest Earnings: Grow your income by reinvesting returns over time.\nP2P lending can boost your income while supporting real people and projects. Just remember to research and diversify!",
+            image: require('../../assets/P2P.jpg'),
+            likes: 1964,
+            comments: 135,
+            profile_pic: require('../../assets/pexels-doquyen-1520760.jpg'),
         },
     ]);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -51,6 +63,7 @@ const BlogsScreen = ({ navigation }) => {
                 </View>
                 <Ionicons name="ellipsis-vertical" size={20} color="black" />
             </View>
+            <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.content}>{item.content}</Text>
             {item.image && <Image source={item.image} style={styles.blogImage} />}
             <View style={styles.actions}>
@@ -115,6 +128,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
+    title:{
+        fontSize: 24,
+        fontWeight: 'bold'
+    },
     main: {
         flexDirection: 'row',
     },
@@ -171,7 +188,7 @@ const styles = StyleSheet.create({
     },
     blogImage: {
         width: '100%',
-        height: 200,
+        height: 250,
         borderRadius: 10,
     },
     actions: {

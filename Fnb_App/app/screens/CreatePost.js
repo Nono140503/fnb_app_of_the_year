@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, Button, Image, StyleSheet, TouchableOpacity, Text, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -7,22 +7,35 @@ const CreatePostScreen = ({ navigation, route }) => {
     const { addBlog } = route.params; // Get addBlog function from route params
     const [content, setContent] = useState('');
     const [imageUri, setImageUri] = useState(null);
+    const [permissionGranted, setPermissionGranted] = useState(false);
 
-    const handleImagePick = async () => {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert("Permission to access camera roll is required!");
-            return;
+
+    const requestImagePickerPermissions = async () => {
+        if (Platform.OS !== 'web') {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status === 'granted') {
+                setPermissionGranted(true);
+            } else {
+                Alert.alert('Permission Denied', 'Allow access to gallery.');
+            }
         }
+    };
 
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            aspect: [4, 3],
-            quality: 0.8,
-        });
+    const OpenGallery = async () => {
+        await requestImagePickerPermissions();
 
-        if (!result.cancelled) {
-            setImageUri(result.uri); // Set the image URI if not cancelled
+        if (permissionGranted) {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 1,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+    
+                setImageUri(result.assets[0].uri);
+            } else {
+                console.log('Image picker result:', result);
+            }
         }
     };
 
@@ -59,10 +72,11 @@ const CreatePostScreen = ({ navigation, route }) => {
                 onChangeText={setContent} // Update content state on text change
             />
             {/* Display the selected image */}
-            {imageUri && (
-                <Image source={{ uri: imageUri }} style={styles.image} />
-            )}
-            <TouchableOpacity style={styles.imageButton} onPress={handleImagePick}>
+            <Image 
+                source={imageUri ? { uri: imageUri } : require('../../assets/pngtree-vector-new-post-neon-sign-effect-png-image_3605555-removebg-preview.png')} 
+                style={styles.image} 
+            />
+            <TouchableOpacity style={styles.imageButton} onPress={OpenGallery}>
                 <Text style={styles.imageButtonText}>Pick an Image</Text>
             </TouchableOpacity>
             <Button title="Post" onPress={handleCreatePost} />
@@ -98,7 +112,7 @@ const styles = StyleSheet.create({
     },
     image: { 
         width: '100%', 
-        height: 200, 
+        height: 250, 
         marginBottom: 20 
     },
     imageButton: { 

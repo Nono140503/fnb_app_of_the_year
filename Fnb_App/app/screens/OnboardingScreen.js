@@ -36,19 +36,19 @@ const OnboardingScreen = ({ navigation }) => {
   const pages = [
     {
       backgroundColor: 'white',
-      image: <Image source={require('../../assets/Layer_2.png')} style={styles.image} />,
+      image: <Image source={require('../../assets/onboard_1.jpeg')} style={styles.image} />,
       title: 'Explore Finance Easily',
       subtitle: 'To your desire',
     },
     {
       backgroundColor: 'white',
-      image: <Image source={require('../../assets/Business Plan.png')} style={styles.image} />,
+      image: <Image source={require('../../assets/onboard_2.jpeg')} style={styles.image} />,
       title: 'Discover your small business essentials',
       subtitle: 'Connect and share with people around you.',
     },
     {
       backgroundColor: 'white',
-      image: <Image source={require('../../assets/Illustration.png')} style={styles.image} />,
+      image: <Image source={require('../../assets/onboard_3.jpeg')} style={styles.image} />,
       title: 'Your all in one for managing your entire small business',
       subtitle: 'Track and achieve your goals effortlessly.',
     },

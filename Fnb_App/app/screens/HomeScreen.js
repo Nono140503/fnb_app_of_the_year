@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     contentContainer: {
         paddingHorizontal: 10,
         paddingBottom: 50, 
-        backgroundColor: '#EBEBEB',
+        backgroundColor: '#f6f7f9',
     },
     sectionContainer: {
         marginBottom: 20,

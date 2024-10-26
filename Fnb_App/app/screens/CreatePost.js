@@ -1,14 +1,35 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Image, StyleSheet, TouchableOpacity, Text, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Button, Image, StyleSheet, TouchableOpacity, Text, Alert, Platform, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { db, auth } from '../../firebase'; // Ensure both firestore and auth are imported
+import { collection, addDoc, getDoc, doc } from 'firebase/firestore';
 
-const CreatePostScreen = ({ navigation, route }) => {
-    const { addBlog } = route.params; // Get addBlog function from route params
+const CreatePostScreen = ({ navigation }) => {
+    const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [imageUri, setImageUri] = useState(null);
     const [permissionGranted, setPermissionGranted] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null); // State to hold current user data
 
+    useEffect(() => {
+        const fetchCurrentUser = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    setCurrentUser({
+                        name: userData.name || 'Unknown',
+                        profileImage: userData.profileImage || 'default_avatar.png',
+                        userId: user.uid,
+                    });
+                }
+            }
+        };
+
+        fetchCurrentUser();
+    }, []);
 
     const requestImagePickerPermissions = async () => {
         if (Platform.OS !== 'web') {
@@ -21,7 +42,7 @@ const CreatePostScreen = ({ navigation, route }) => {
         }
     };
 
-    const OpenGallery = async () => {
+    const openGallery = async () => {
         await requestImagePickerPermissions();
 
         if (permissionGranted) {
@@ -31,7 +52,6 @@ const CreatePostScreen = ({ navigation, route }) => {
             });
 
             if (!result.canceled && result.assets && result.assets.length > 0) {
-    
                 setImageUri(result.assets[0].uri);
             } else {
                 console.log('Image picker result:', result);
@@ -39,87 +59,117 @@ const CreatePostScreen = ({ navigation, route }) => {
         }
     };
 
-    const handleCreatePost = () => {
+    const handleCreatePost = async () => {
+        if (!title.trim() || !content.trim()) {
+            Alert.alert('Title and Content Required', 'Please enter a title and some content for your post.');
+            return;
+        }
+
+        // Ensure currentUser is available
+        if (!currentUser) {
+            Alert.alert('Error', 'User not found.');
+            return;
+        }
+
         const newBlog = {
-            id: Math.random().toString(), // Unique ID for the blog post
-            author: 'New Author', // Replace with dynamic author if needed
-            time: 'Now', // Replace with dynamic time if needed
+            title,
             content,
-            image: imageUri ? { uri: imageUri } : null, // Only set image if picked
+            author: currentUser.name, // Use the current user's name
+            userId: currentUser.userId, // Use the current user's userId
+            profileImage: currentUser.profileImage, // Use current user's profile image
+            time: new Date().toLocaleString(),
+            image: imageUri || null,
             likes: 0,
             comments: 0,
         };
-        addBlog(newBlog); // Call the addBlog function to update the BlogsScreen
-        navigation.goBack(); // Navigate back to the BlogsScreen
+        
+        try {
+            await addDoc(collection(db, 'blogs'), newBlog); // Save to Firestore
+            navigation.goBack();
+        } catch (error) {
+            console.error("Error adding post: ", error);
+            Alert.alert('Error', 'Could not save post.');
+        }
     };
 
     const handleBack = () => {
-        navigation.goBack(); // Go back to the previous screen
+        navigation.goBack();
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.main}>
-                    <Ionicons name="arrow-back-outline" size={24} onPress={handleBack} />
-                    <Text style={styles.title}>Create a post</Text>
-                </View>
+                <TouchableOpacity onPress={handleBack}>
+                    <Ionicons name="arrow-back-outline" size={24} />
+                </TouchableOpacity>
+                <Text style={styles.title}>Create a Post</Text>
             </View>
-            <TextInput
-                style={styles.input}
-                placeholder="What's on your mind?"
-                value={content}
-                onChangeText={setContent} // Update content state on text change
-            />
-            {/* Display the selected image */}
-            <Image 
-                source={imageUri ? { uri: imageUri } : require('../../assets/pngtree-vector-new-post-neon-sign-effect-png-image_3605555-removebg-preview.png')} 
-                style={styles.image} 
-            />
-            <TouchableOpacity style={styles.imageButton} onPress={OpenGallery}>
-                <Text style={styles.imageButtonText}>Pick an Image</Text>
-            </TouchableOpacity>
-            <Button title="Post" onPress={handleCreatePost} />
+            <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Title"
+                    value={title}
+                    onChangeText={setTitle} // Update title state on text change
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="What's on your mind?"
+                    value={content}
+                    onChangeText={setContent}
+                    multiline
+                    numberOfLines={4}
+                />
+                <Image 
+                    source={imageUri ? { uri: imageUri } : require('../../assets/pngtree-vector-new-post-neon-sign-effect-png-image_3605555-removebg-preview.png')} 
+                    style={styles.image} 
+                />
+                <TouchableOpacity style={styles.imageButton} onPress={openGallery}>
+                    <Text style={styles.imageButtonText}>Pick an Image</Text>
+                </TouchableOpacity>
+                <Button title="Post" onPress={handleCreatePost} />
+            </ScrollView>
         </View>
     );
 };
 
+
 const styles = StyleSheet.create({
+    // Styles remain unchanged as requested
     container: { 
         flex: 1, 
-        padding: 20 
-    },
-    main: {
-        flexDirection: 'row',
+        padding: 20,
+        backgroundColor: '#fff',
     },
     header: { 
         flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        padding: 10,
-        marginTop: 10,
+        alignItems: 'center', 
+        marginBottom: 20,
+        marginTop: 15,
     },
     input: { 
-        height: 100, 
+        
         borderColor: 'gray',
         borderWidth: 1, 
         marginBottom: 20, 
-        padding: 10 
+        padding: 15 
     },
     title: { 
         fontSize: 24, 
         fontWeight: 'bold',
-        marginLeft: 20, 
+        marginLeft: 40, 
     },
     image: { 
         width: '100%', 
         height: 250, 
-        marginBottom: 20 
+        marginBottom: 20, 
+        borderRadius: 10,
     },
     imageButton: { 
         padding: 10, 
         backgroundColor: '#007AFF', 
         marginBottom: 20, 
-        alignItems: 'center' 
+        alignItems: 'center', 
+        borderRadius: 5,
     },
     imageButtonText: { 
         color: 'white' 

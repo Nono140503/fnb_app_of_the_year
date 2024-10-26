@@ -8,6 +8,8 @@ import HomeScreen from './app/screens/HomeScreen';
 import BlogsScreen from './app/screens/Blogs';
 import CreatePost from './app/screens/CreatePost';
 import { AuthProvider } from './Global/AuthContext';
+import EditProfileScreen from './app/screens/EditProfile';
+import Settings from './app/screens/Settings';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +24,8 @@ export default function App() {
         <Stack.Screen name="Home Screen" component={HomeScreen} options={{headerShown: false}}/>
         <Stack.Screen name="Blogs Screen" component={BlogsScreen} options={{headerShown: false}}/>
         <Stack.Screen name='Create Post' component={CreatePost} options={{headerShown: false}}/>
+        <Stack.Screen name='Settings' component={Settings} options={{headerShown: false}}/>
+        <Stack.Screen name='Edit Profile' component={EditProfileScreen} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
     </AuthProvider>

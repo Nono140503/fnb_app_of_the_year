@@ -1,33 +1,47 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, SafeAreaView, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { db } from '../../firebase';
+import { collection, onSnapshot, doc, getDoc } from "firebase/firestore"; // Ensure correct imports
 
 const BlogsScreen = ({ navigation }) => {
-    const [blogs, setBlogs] = useState([
-        {
-            id: '1',
-            author: 'John Steysen',
-            time: '08:39 am',
-            title: 'Title',
-            content: 'Lorem Ipsum Dolor Sit Amet, Consectetur Adipisicing Elit. Fringilla Natoque Id Aenean.',
-            image: require('../../assets/Financial-Literacy-for-Academic-Libraries-780-final.png'),
-            likes: 1964,
-            comments: 135,
-            profile_pic: require('../../assets/pexels-creationhill-1681010.jpg'),
-        },
-        {
-            id: '2',
-            author: 'Leah Bezuidenhout',
-            time: '11:39 am',
-            title: 'How to Use Peer-to-Peer Lending for Income',
-            content: "Want to diversify your income? Peer-to-peer (P2P) lending can help! Here's how:\nLend Directly: P2P platforms let you lend directly to borrowers and earn interest.\nSet Goals & Assess Risks: Decide your investment amount and risk tolerance; higher returns often mean higher risk.\nChoose a Platform: Research P2P platforms for fees and loan options that fit your goals.\nReinvest Earnings: Grow your income by reinvesting returns over time.\nP2P lending can boost your income while supporting real people and projects. Just remember to research and diversify!",
-            image: require('../../assets/P2P.jpg'),
-            likes: 1964,
-            comments: 135,
-            profile_pic: require('../../assets/pexels-doquyen-1520760.jpg'),
-        },
-    ]);
+    const [blogs, setBlogs] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, 'blogs'), async (snapshot) => {
+            const blogsData = await Promise.all(
+                snapshot.docs.map(async (doc) => {
+                    const blog = { id: doc.id, ...doc.data() };
+                    console.log('Fetched blog:', blog); // Log the fetched blog data
+    
+                    if (blog.userId) {
+                        try {
+                            const userRef = doc(db, 'users', blog.userId); // Reference to the user document
+                            const userDoc = await getDoc(userRef);
+                            if (userDoc.exists()) {
+                                const userData = userDoc.data();
+                                blog.author = userData.name || 'Unknown';
+                                blog.profile_pic = userData.profileImage || 'default_avatar.png';
+                            } else {
+                                console.warn('No such user document:', blog.userId);
+                            }
+                        } catch (error) {
+                            console.error("Error fetching blog author: ", error);
+                        }
+                    }
+                    return blog;
+                })
+            );
+            console.log('Blogs data:', blogsData); // Log the processed blogs data
+            setBlogs(blogsData);
+        }, (error) => {
+            console.error("Error fetching blogs: ", error);
+            Alert.alert('Error', 'Could not fetch blogs.');
+        });
+    
+        return () => unsubscribe(); // Cleanup on unmount
+    }, []);
 
     const openModal = () => {
         setIsModalVisible(true);
@@ -37,35 +51,28 @@ const BlogsScreen = ({ navigation }) => {
         setIsModalVisible(false);
     };
 
-    const handleOptionSelect = (option) => {
-        closeModal();
-        if (option === 'Create Post') {
-            navigation.navigate('Create Post', { addBlog }); // Pass addBlog function to CreatePostScreen
-        }
-        // Add handling for other options if necessary
+    const navigateToCreatePost = () => {
+        navigation.navigate('Create Post');
+        setIsModalVisible(false);
     };
 
     const handleBack = () => {
         navigation.goBack();
     };
 
-    const addBlog = (newBlog) => {
-        setBlogs((prevBlogs) => [...prevBlogs, newBlog]);
-    };
-
     const renderBlogItem = ({ item }) => (
         <View style={styles.blogContainer}>
             <View style={styles.header}>
-                <Image source={item.profile_pic} style={styles.profileImage} />
+                <Image source={{ uri: item.profile_pic }} style={styles.profileImage} />
                 <View style={styles.authorDetails}>
-                    <Text style={styles.author}>{item.author}</Text>
+                    <Text style={styles.author}>{item.author || 'Unknown'}</Text>
                     <Text style={styles.time}>{item.time}</Text>
                 </View>
                 <Ionicons name="ellipsis-vertical" size={20} color="black" />
             </View>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.content}>{item.content}</Text>
-            {item.image && <Image source={item.image} style={styles.blogImage} />}
+            {item.image && <Image source={{ uri: item.image }} style={styles.blogImage} />}
             <View style={styles.actions}>
                 <Text>{item.likes} Likes</Text>
                 <Text>{item.comments} Comments</Text>
@@ -78,19 +85,19 @@ const BlogsScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+             <View style={styles.header}>
+                        <View style={styles.main}>
+                            <Ionicons name="arrow-back-outline" size={24} onPress={handleBack} />
+                            <Text style={styles.heading}>Blogs</Text>
+                        </View>
+                        <Ionicons name="search-outline" size={24} color="black" />
+                    </View>
             <FlatList
                 data={blogs}
                 renderItem={renderBlogItem}
                 keyExtractor={(item) => item.id}
-                ListHeaderComponent={
-                    <View style={styles.header}>
-                        <View style={styles.main}>
-                            <Ionicons name="arrow-back-outline" size={24} onPress={handleBack} />
-                            <Text style={styles.title}>Blogs</Text>
-                        </View>
-                        <Ionicons name="search-outline" size={24} color="black" />
-                    </View>
-                }
+                style={ {backgroundColor: '#f6f7f9'}}
+                
             />
             <TouchableOpacity style={styles.addButton} onPress={openModal}>
                 <Ionicons name="add" size={24} color="white" />
@@ -103,7 +110,7 @@ const BlogsScreen = ({ navigation }) => {
                             <Text style={styles.optionText_select}>Select an option</Text>
                             <Ionicons name="close-outline" size={24} color="white" />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.option} onPress={() => handleOptionSelect('Create Post')}>
+                        <TouchableOpacity style={styles.option} onPress={navigateToCreatePost}>
                             <Text style={styles.optionText}>Create a Post</Text>
                             <Ionicons name="create-outline" size={24} />
                         </TouchableOpacity>
@@ -122,7 +129,6 @@ const BlogsScreen = ({ navigation }) => {
     );
 };
 
-// Styles remain unchanged
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -130,15 +136,23 @@ const styles = StyleSheet.create({
     },
     title:{
         fontSize: 18,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+    },
+    heading:{
+        fontSize: 22,
+        fontWeight: 'bold',
+        marginLeft: 10,
     },
     main: {
         flexDirection: 'row',
+        padding: 10,
+        
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10,
+        
     },
     options: {
         backgroundColor: 'white',

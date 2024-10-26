@@ -41,6 +41,9 @@ const HomeScreen = ({ navigation }) => {
     const renderSlideshowItem = ({ item }) => (
         <Image source={item.image} style={styles.slideshowImage} />
     );
+    const blog = () =>{
+        navigation.navigate('Blogs Screen');
+    }
 
     return (
         <>
@@ -92,7 +95,7 @@ const HomeScreen = ({ navigation }) => {
                                 <View style={styles.verticalLine} />
                                 <Text style={styles.headingText}>Blogs</Text>
                             </View>
-                            <TouchableOpacity style={styles.viewAllButton}>
+                            <TouchableOpacity style={styles.viewAllButton} onPress={blog}>
                                 <Text style={styles.viewAllText}>View All</Text>
                             </TouchableOpacity>
                         </View>
@@ -233,12 +236,12 @@ const styles = StyleSheet.create({
     exploreContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginBottom: 10,
+        marginBottom: 5,
         flexWrap: 'wrap',
     },
     imageWrapper: {
         alignItems: 'center',
-        marginBottom: 15,
+        marginBottom: 5,
         width: '23%',
     },
     exploreImage: {

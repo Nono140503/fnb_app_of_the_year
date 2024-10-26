@@ -5,12 +5,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [activeTab, setActiveTab] = useState('Login'); 
 
   const handleLogin = () => {
-    // Login logic here
+    navigation.navigate('Home Screen')
   };
 
   const handleSignUp = () => {
@@ -19,9 +20,9 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-    <ImageBackground source={require('../../assets/Pattern.png')}>
-    <Text style={styles.title}>Welcome back!</Text>
-    </ImageBackground>
+      <ImageBackground source={require('../../assets/Pattern.png')} style={styles.background}>
+        <Text style={styles.title}>Welcome back!</Text>
+      </ImageBackground>
       
       <Text style={styles.subtitle}>Log in to explore new possibilities that suit your business needs.</Text>
 
@@ -35,65 +36,82 @@ const LoginScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-     <View style={StyleSheet.cont}>
-     <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-
-      {/* Password Input with Eye Icon */}
-      <View style={styles.passwordContainer}>
+      <View style={styles.cont}>
         <TextInput
           style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={!isPasswordVisible}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
-        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-          <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={24} color="gray" style={styles.eye}/>
-        </TouchableOpacity>
-      </View>
 
-      {/* Remember Me Toggle */}
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity 
-          style={styles.toggleContainer} 
-          onPress={() => setRememberMe(!rememberMe)}
-        >
-          <Ionicons 
-            name={rememberMe ? 'checkbox-outline' : 'square-outline'} 
-            size={24} 
-            color="gray" 
+        {/* Password Input with Eye Icon */}
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!isPasswordVisible}
           />
-          <Text style={styles.rememberMeText}>Remember me</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-          <Text style={styles.forgotText}>Forgot Password?</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+            <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={24} color="gray" style={styles.eye} />
+          </TouchableOpacity>
+        </View>
 
-      {/* Login/Signup Button */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={activeTab === 'Login' ? handleLogin : handleSignUp}
-      >
-        <Text style={styles.buttonText}>{activeTab === 'Login' ? 'Log In' : 'Sign Up'}</Text>
-      </TouchableOpacity>
+        {activeTab === 'Signup' && (
+          <>
+            {/* Confirm Password Input */}
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={!isPasswordVisible}
+              />
+              <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={24} color="gray" style={styles.eye} />
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
 
-      {/* Social Logins */}
-      <Text style={styles.orText}>Or login with</Text>
-      <View style={styles.socialLoginContainer}>
-        <Ionicons name="logo-google" size={32} color="gray" />
-        <Ionicons name="logo-apple" size={32} color="gray" />
-        <Ionicons name="logo-facebook" size={32} color="gray" />
+        {/* Remember Me Toggle */}
+        <View style={styles.optionsContainer}>
+          <TouchableOpacity 
+            style={styles.toggleContainer} 
+            onPress={() => setRememberMe(!rememberMe)}
+          >
+            <Ionicons 
+              name={rememberMe ? 'checkbox-outline' : 'square-outline'} 
+              size={24} 
+              color="gray" 
+            />
+            <Text style={styles.rememberMeText}>Remember me</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Forgot Password')}>
+            <Text style={styles.forgotText}>Forgot Password?</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Login/Signup Button */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={activeTab === 'Login' ? handleLogin : handleSignUp}
+        >
+          <Text style={styles.buttonText}>{activeTab === 'Login' ? 'Log In' : 'Sign Up'}</Text>
+        </TouchableOpacity>
+
+        {/* Social Logins */}
+        <Text style={styles.orText}>Or login with</Text>
+        <View style={styles.socialLoginContainer}>
+          <Ionicons name="logo-google" size={32} color="gray" />
+          <Ionicons name="logo-apple" size={32} color="gray" />
+          <Ionicons name="logo-facebook" size={32} color="gray" />
+        </View>
       </View>
-     </View>
-    
     </View>
   );
 };
@@ -101,24 +119,28 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // padding: 10,
-    
     backgroundColor: '#fff',
   },
-  eye:{
+  background: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 150,
+  },
+  eye: {
     right: 40,
     bottom: 5,
   },
-  cont:{
-    padding: 20,
-    width: '80%',
+  cont: {
+    padding: 10,
+    width: '90%',
+    alignSelf: 'center',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    marginTop: 110
+    marginTop: 30,
   },
   subtitle: {
     fontSize: 14,
@@ -152,8 +174,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 10,
     marginBottom: 15,
-    width: '95%',
-    marginLeft: 10
+    width: '100%',
   },
   passwordContainer: {
     flexDirection: 'row',
@@ -196,7 +217,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 10,
-    marginLeft: 18,
   },
 });
 

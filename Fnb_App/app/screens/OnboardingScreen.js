@@ -36,20 +36,20 @@ const OnboardingScreen = ({ navigation }) => {
   const pages = [
     {
       backgroundColor: 'white',
-      image: <Image source={require('../../assets/rafiki.png')} style={styles.image} />,
+      image: <Image source={require('../../assets/Layer_2.png')} style={styles.image} />,
       title: 'Explore Finance Easily',
       subtitle: 'To your desire',
     },
     {
       backgroundColor: 'white',
-      image: <Image source={require('../../assets/rafiki.png')} style={styles.image} />,
-      title: 'Stay Connected',
+      image: <Image source={require('../../assets/Business Plan.png')} style={styles.image} />,
+      title: 'Discover your small business essentials',
       subtitle: 'Connect and share with people around you.',
     },
     {
       backgroundColor: 'white',
-      image: <Image source={require('../../assets/rafiki.png')} style={styles.image} />,
-      title: 'Achieve More',
+      image: <Image source={require('../../assets/Illustration.png')} style={styles.image} />,
+      title: 'Your all in one for managing your entire small business',
       subtitle: 'Track and achieve your goals effortlessly.',
     },
   ];
@@ -65,7 +65,7 @@ const OnboardingScreen = ({ navigation }) => {
         onDone={() => navigation.replace('Login')}
         pages={pages.map((page, index) => ({
           ...page,
-          title: <Text style={[styles.title, { marginTop: 40 + index * 20 }]}>{page.title}</Text>,
+          title: <Text style={[styles.title, { marginTop: 40 }]}>{page.title}</Text>,
           subtitle: <Text style={[styles.subtitle, { marginTop: 10 }]}>{page.subtitle}</Text>,
         }))}
         containerStyles={styles.onboardingContainer} // Style the Onboarding container
@@ -102,8 +102,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginLeft: 40,
+    marginLeft: 10,
     width: '100%',
+    paddingHorizontal: 10,
   },
   subtitle: {
     fontSize: 18,

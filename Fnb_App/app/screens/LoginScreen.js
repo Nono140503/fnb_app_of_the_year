@@ -10,90 +10,98 @@ const LoginScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Login'); 
 
   const handleLogin = () => {
-    // Login logic here
+    navigation.replace('EducationModule');
   };
 
-  const handleSignUp = () => {
-    // Sign up logic here
+  const navigateToSignUp = () => {
+    // Navigate to the SignUp screen directly
+    navigation.navigate('SignUp'); 
   };
 
   return (
     <View style={styles.container}>
-    <ImageBackground source={require('../../assets/Pattern.png')}>
-    <Text style={styles.title}>Welcome back!</Text>
-    </ImageBackground>
+      <ImageBackground source={require('../../assets/Pattern.png')}>
+        <Text style={styles.title}>Welcome back!</Text>
+      </ImageBackground>
       
       <Text style={styles.subtitle}>Log in to explore new possibilities that suit your business needs.</Text>
 
       {/* Tabs for Login and Signup */}
       <View style={styles.tabContainer}>
-        <TouchableOpacity onPress={() => setActiveTab('Login')} style={[styles.tab, activeTab === 'Login' && styles.activeTab]}>
+        <TouchableOpacity 
+          onPress={() => setActiveTab('Login')} 
+          style={[styles.tab, activeTab === 'Login' && styles.activeTab]}
+        >
           <Text style={styles.tabText}>Log In</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setActiveTab('Signup')} style={[styles.tab, activeTab === 'Signup' && styles.activeTab]}>
+        
+        {/* Navigate to SignUp when the Sign Up tab is pressed */}
+        <TouchableOpacity 
+          onPress={navigateToSignUp} 
+          style={[styles.tab, activeTab === 'Signup' && styles.activeTab]}
+        >
           <Text style={styles.tabText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
 
-     <View style={StyleSheet.cont}>
-     <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-
-      {/* Password Input with Eye Icon */}
-      <View style={styles.passwordContainer}>
+      <View style={styles.cont}>
         <TextInput
           style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={!isPasswordVisible}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
-        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-          <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={24} color="gray" style={styles.eye}/>
-        </TouchableOpacity>
-      </View>
 
-      {/* Remember Me Toggle */}
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity 
-          style={styles.toggleContainer} 
-          onPress={() => setRememberMe(!rememberMe)}
-        >
-          <Ionicons 
-            name={rememberMe ? 'checkbox-outline' : 'square-outline'} 
-            size={24} 
-            color="gray" 
+        {/* Password Input with Eye Icon */}
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!isPasswordVisible}
           />
-          <Text style={styles.rememberMeText}>Remember me</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-          <Text style={styles.forgotText}>Forgot Password?</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+            <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={24} color="gray" style={styles.eye}/>
+          </TouchableOpacity>
+        </View>
 
-      {/* Login/Signup Button */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={activeTab === 'Login' ? handleLogin : handleSignUp}
-      >
-        <Text style={styles.buttonText}>{activeTab === 'Login' ? 'Log In' : 'Sign Up'}</Text>
-      </TouchableOpacity>
+        {/* Remember Me Toggle */}
+        <View style={styles.optionsContainer}>
+          <TouchableOpacity 
+            style={styles.toggleContainer} 
+            onPress={() => setRememberMe(!rememberMe)}
+          >
+            <Ionicons 
+              name={rememberMe ? 'checkbox-outline' : 'square-outline'} 
+              size={24} 
+              color="gray" 
+            />
+            <Text style={styles.rememberMeText}>Remember me</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+            <Text style={styles.forgotText}>Forgot Password?</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Social Logins */}
-      <Text style={styles.orText}>Or login with</Text>
-      <View style={styles.socialLoginContainer}>
-        <Ionicons name="logo-google" size={32} color="gray" />
-        <Ionicons name="logo-apple" size={32} color="gray" />
-        <Ionicons name="logo-facebook" size={32} color="gray" />
+        {/* Login Button */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+        >
+          <Text style={styles.buttonText}>Log In</Text>
+        </TouchableOpacity>
+
+        {/* Social Logins */}
+        <Text style={styles.orText}>Or login with</Text>
+        <View style={styles.socialLoginContainer}>
+          <Ionicons name="logo-google" size={32} color="gray" />
+          <Ionicons name="logo-apple" size={32} color="gray" />
+          <Ionicons name="logo-facebook" size={32} color="gray" />
+        </View>
       </View>
-     </View>
-    
     </View>
   );
 };
@@ -101,15 +109,13 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // padding: 10,
-    
     backgroundColor: '#fff',
   },
-  eye:{
+  eye: {
     right: 40,
     bottom: 5,
   },
-  cont:{
+  cont: {
     padding: 20,
     width: '80%',
   },
@@ -118,7 +124,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    marginTop: 110
+    marginTop: 110,
   },
   subtitle: {
     fontSize: 14,
@@ -153,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 15,
     width: '95%',
-    marginLeft: 10
+    marginLeft: 10,
   },
   passwordContainer: {
     flexDirection: 'row',

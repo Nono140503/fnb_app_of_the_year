@@ -12,6 +12,8 @@ import FinancialEssentials  from './app/screens/FinancialEssentials';
 import { AuthProvider } from './Global/AuthContext';
 import EditProfileScreen from './app/screens/EditProfile';
 import Settings from './app/screens/Settings';
+import UploadScreen from './app/screens/UploadScreen';
+import DetailsScreen from './app/screens/DetailsScreen';
 
 const Stack = createStackNavigator();
 
@@ -27,9 +29,11 @@ export default function App() {
         <Stack.Screen name="Blogs Screen" component={BlogsScreen} options={{headerShown: false}}/>
         <Stack.Screen name='Create Post' component={CreatePost} options={{headerShown: false}}/>
         <Stack.Screen name="Inventory Scan" component={InventoryScan} options={{headerShown:false}} />
-        <Stack.Screen name="Financial Essentials" component={FinancialEssentials} />
+        <Stack.Screen name="Financial Essentials" component={FinancialEssentials} options={{headerShown: false}}/>
         <Stack.Screen name='Settings' component={Settings} options={{headerShown: false}}/>
         <Stack.Screen name='Edit Profile' component={EditProfileScreen} options={{headerShown: false}}/>
+        <Stack.Screen name='Upload File' component={UploadScreen} options={{headerShown: false}}/>
+        <Stack.Screen name='Details Screen' component={DetailsScreen} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
     </AuthProvider>

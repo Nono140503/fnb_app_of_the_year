@@ -7,19 +7,34 @@ const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation, route }) => {
     const [currentScreen, setCurrentScreen] = useState('Home Screen');
-    
-  
-    
-  
+    const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
     const handleNavigation = (screen) => {
         setCurrentScreen(screen);
         navigation.navigate(screen);
     };
+    const onScroll = (event) => {
+        const contentOffsetX = event.nativeEvent.contentOffset.x;
+        const currentIndex = Math.floor(contentOffsetX / width);
+        setCurrentSlideIndex(currentIndex);
+    };
 
+    const renderDots = () => (
+        <View style={styles.dotsContainer}>
+            {slideshowItems.map((_, index) => (
+                <View
+                    key={index}
+                    style={[
+                        styles.dot,
+                        currentSlideIndex === index ? styles.activeDot : styles.inactiveDot,
+                    ]}
+                />
+            ))}
+        </View>
+    );
     const slideshowItems = [
-        { id: '1', image: require('../../assets/Group 34837.png') },
-        { id: '2', image: require('../../assets/rafiki.png') },
+        { id: '1', image: require('../../assets/slide_1.jpeg') },
+        { id: '2', image: require('../../assets/slide_2.jpeg') },
         { id: '3', image: require('../../assets/rafiki.png') },
     ];
 
@@ -36,10 +51,10 @@ const HomeScreen = ({ navigation, route }) => {
     ];
 
     const exploreItems = [
-        { id: '1', image: require('../../assets/marketplace.png'), label: 'Market Place' },
-        { id: '2', image: require('../../assets/compliance.png'), label: 'Compliance Essentials' },
-        { id: '3', image: require('../../assets/Finance.png'), label: 'Financial Essentials' },
-        { id: '4', image: require('../../assets/financial-literacy.png'), label: 'Business Library' },
+        { id: '1', image: require('../../assets/marketplace.png'), label: 'Market Place',nav: 'Marketplace' },
+        { id: '2', image: require('../../assets/compliance.png'), label: 'Compliance Essentials',nav: 'Marketplace' },
+        { id: '3', image: require('../../assets/Finance.png'), label: 'Financial Essentials',nav: 'Financial Essentials' },
+        { id: '4', image: require('../../assets/financial-literacy.png'), label: 'Business Library',nav: 'Marketplace' },
     ];
 
     const renderSlideshowItem = ({ item }) => (
@@ -51,7 +66,9 @@ const HomeScreen = ({ navigation, route }) => {
     };
 
     // Function to close modal
-    
+    const handleNav = (navTarget) => {
+        navigation.navigate(navTarget);
+    };
     
    
     return (
@@ -67,16 +84,20 @@ const HomeScreen = ({ navigation, route }) => {
                 </View>
 
                 <ScrollView contentContainerStyle={styles.contentContainer}>
-                    <FlatList
-                        data={slideshowItems}
-                        renderItem={renderSlideshowItem}
-                        keyExtractor={item => item.id}
-                        horizontal
-                        pagingEnabled
-                        showsHorizontalScrollIndicator={false}
-                        style={styles.slideshowContainer}
-                    />
-
+                <View style={styles.slideshowContainer}>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            {slideshowItems.map((item) => (
+                                <Image
+                                    key={item.id}
+                                    source={item.image}
+                                    style={styles.slideshowImage}
+                                    resizeMode="contain" // Ensures the image fits within the container
+                                />
+                            ))}
+                        </ScrollView>
+                        
+                    </View>
+                    {renderDots()}
                     <View style={styles.sectionContainer}>
                         <View style={styles.headingWrapper}>
                             <View style={styles.headingLeft}>
@@ -90,7 +111,9 @@ const HomeScreen = ({ navigation, route }) => {
                         <View style={styles.exploreContainer}>
                             {exploreItems.map((item) => (
                                 <View key={item.id} style={styles.imageWrapper}>
-                                    <Image source={item.image} style={styles.exploreImage} />
+                                    <TouchableOpacity onPress={() => handleNav(item.nav)}>
+                                            <Image source={item.image} style={styles.exploreImage} />
+                                    </TouchableOpacity>
                                     <Text style={styles.circleLabel}>{item.label}</Text>
                                 </View>
                             ))}
@@ -190,19 +213,13 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
     },
     slideshowContainer: {
-        width: width,
-        height: 150,
+        height: 160, // Adjust height as needed
         marginBottom: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 2, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 2,
+        backgroundColor: '#166FF5'
     },
     slideshowImage: {
-        width: width,
+        width: width, // Each image takes full width of the screen
         height: '100%',
-        resizeMode: 'cover',
     },
     contentContainer: {
         paddingHorizontal: 10,
@@ -315,6 +332,23 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         marginTop: 5,
         color: '#1d61e7',
+    },
+    dot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        marginHorizontal: 4,
+    },
+    activeDot: {
+        backgroundColor: 'white', // Active dot color
+    },
+    inactiveDot: {
+        backgroundColor: '#C0C0C0', // Inactive dot color
+    },
+    dotsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        bottom: 30,
     },
     
 });

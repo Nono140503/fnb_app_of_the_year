@@ -37,7 +37,7 @@ function BottomTabBar({ navigation, currentScreen }) {
             </TouchableOpacity>
 
             <TouchableOpacity
-                onPress={() => navigation.navigate('Invoices')}
+                onPress={() => navigation.navigate('Upload File')}
                 style={styles.iconContainer}
             >
                 <Icon
@@ -47,20 +47,6 @@ function BottomTabBar({ navigation, currentScreen }) {
                 />
                 <Text style={{ color: currentScreen === 'Invoices' ? activeColor : defaultColor }}>
                     Invoice
-                </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                onPress={() => navigation.navigate('Financial Essentials')}
-                style={styles.iconContainer}
-            >
-                <Icon
-                    name='book-outline'
-                    size={25}
-                    color={currentScreen === 'Financial Essentials' ? activeColor : defaultColor}
-                />
-                <Text style={{ color: currentScreen === 'Financial Essentials' ? activeColor : defaultColor }}>
-                    Financial Essentials
                 </Text>
             </TouchableOpacity>
 

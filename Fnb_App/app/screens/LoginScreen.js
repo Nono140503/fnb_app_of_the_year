@@ -1,24 +1,72 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Alert, Modal } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { auth } from '../../firebase'; // Import the auth instance from your Firebase setup
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { db } from '../../firebase'; 
+import { doc, setDoc } from 'firebase/firestore';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, route }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [activeTab, setActiveTab] = useState('Login'); 
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLogin = () => {
-    navigation.navigate('Home Screen')
+  // Handle user login
+  useEffect(() => {
+    // Check if the user just signed up and set modal visibility
+    if (route.params?.justSignedUp) {
+        setModalVisible(true);
+    }
+}, [route.params]);
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      Alert.alert('Success', 'Logged in successfully');
+      navigation.navigate('Home Screen', { userEmail: email });
+      
+    } catch (error) {
+      Alert.alert('Login Failed', error.message);
+    }
   };
 
-  const handleSignUp = () => {
-    // Sign up logic here
+  // Handle user signup
+  const handleSignUp = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      await setDoc(doc(db, 'users', user.uid), {
+        email,
+        userId: user.uid,
+      });
+      
+      Alert.alert('Success', 'Account created successfully');
+      
+      // Show the modal after successful signup
+      setModalVisible(true); 
+      
+    } catch (error) {
+      Alert.alert('Signup Failed', error.message);
+    }
   };
-
+  const edit = () => {
+    navigation.navigate('Edit Profile', { userEmail: email });
+    setModalVisible(false);
+};
+const closeModal = () => {
+  setModalVisible(false);
+  // Add any additional logic for after modal is closed
+};
   return (
+    <>
     <View style={styles.container}>
       <ImageBackground source={require('../../assets/Pattern.png')} style={styles.background}>
         <Text style={styles.title}>Welcome back!</Text>
@@ -112,7 +160,25 @@ const LoginScreen = ({ navigation }) => {
           <Ionicons name="logo-facebook" size={32} color="gray" />
         </View>
       </View>
+      <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={closeModal}
+                >
+                    <View style={styles.overlay}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.welcome}>Welcome!</Text>
+                            <Text style={styles.modalText}>Before you proceed, please update your profile details.</Text>
+                            
+                            <TouchableOpacity onPress={edit} style={styles.proceed}>
+                                <Text style={styles.proceedText}>Proceed</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
     </View>
+    </>
   );
 };
 
@@ -126,6 +192,64 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 150,
   },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black
+    alignItems: 'center',
+},    modalView: {
+  marginTop: 300,
+  backgroundColor: 'white',
+  borderRadius: 20,
+  padding: 20,
+  alignItems: 'center',
+  shadowColor: '#000',
+  shadowOffset: {
+      width: 0,
+      height: 2,
+  },
+  width: '90%',
+  height: 180,
+  shadowOpacity: 0.25,
+  shadowRadius: 4,
+  elevation: 5,
+},
+modalText: {
+  marginBottom: 15,
+  textAlign: 'center',
+},    
+proceed:{
+  padding: 10,
+  backgroundColor: '#1d61e7',
+  width: '80%',
+  alignItems: 'center',
+  borderRadius: 5,
+},
+proceedText:{
+  color:'white',
+  fontWeight: 'bold',
+  fontSize: 15,
+},
+modalView: {
+        marginTop: 300,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        width: '90%',
+        height: 180,
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+    },
   eye: {
     right: 40,
     bottom: 5,

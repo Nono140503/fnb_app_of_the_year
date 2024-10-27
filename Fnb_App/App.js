@@ -9,12 +9,16 @@ import BlogsScreen from './app/screens/Blogs';
 import CreatePost from './app/screens/CreatePost';
 import InventoryScan from './app/screens/InventoryScan';
 import FinancialEssentials  from './app/screens/FinancialEssentials';
+import { AuthProvider } from './Global/AuthContext';
+import EditProfileScreen from './app/screens/EditProfile';
+import Settings from './app/screens/Settings';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
+    <AuthProvider>
+          <NavigationContainer>
       <Stack.Navigator initialRouteName='Onboarding Screen'>
         <Stack.Screen name="Onboarding Screen" component={OnboardingScreen} options={{headerShown: false}}/>
         <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
@@ -24,8 +28,11 @@ export default function App() {
         <Stack.Screen name='Create Post' component={CreatePost} options={{headerShown: false}}/>
         <Stack.Screen name="Inventory Scan" component={InventoryScan} options={{headerShown:false}} />
         <Stack.Screen name="Financial Essentials" component={FinancialEssentials} />
-
+        <Stack.Screen name='Settings' component={Settings} options={{headerShown: false}}/>
+        <Stack.Screen name='Edit Profile' component={EditProfileScreen} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
+    </AuthProvider>
+    
   );
 }

@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, FlatList, Modal, Button } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import BottomTabBar from '../../components/BottomTabBar';
 
 const { width } = Dimensions.get('window');
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
     const [currentScreen, setCurrentScreen] = useState('Home Screen');
     
+  
+    
+  
+
     const handleNavigation = (screen) => {
         setCurrentScreen(screen);
         navigation.navigate(screen);
@@ -41,15 +45,20 @@ const HomeScreen = ({ navigation }) => {
     const renderSlideshowItem = ({ item }) => (
         <Image source={item.image} style={styles.slideshowImage} />
     );
-    const blog = () =>{
-        navigation.navigate('Blogs Screen');
-    }
 
+    const blog = () => {
+        navigation.navigate('Blogs Screen');
+    };
+
+    // Function to close modal
+    
+    
+   
     return (
         <>
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => setModalVisible(true)}>
                         <Ionicons name="notifications-outline" size={24} color="black" />
                     </TouchableOpacity>
                     <TouchableOpacity>
@@ -67,7 +76,7 @@ const HomeScreen = ({ navigation }) => {
                         showsHorizontalScrollIndicator={false}
                         style={styles.slideshowContainer}
                     />
-                    
+
                     <View style={styles.sectionContainer}>
                         <View style={styles.headingWrapper}>
                             <View style={styles.headingLeft}>
@@ -128,7 +137,7 @@ const HomeScreen = ({ navigation }) => {
                         <FlatList
                             data={discounts}
                             renderItem={({ item }) => (
-                                <View style={[styles.discountCard, { backgroundColor: item.colour }]}>
+                                <View style={[styles.discountCard, { backgroundColor: item.colour }]} >
                                     <Text style={styles.discountText}>{item.title}</Text>
                                     <Text style={styles.discount}>{item.discount}</Text>
                                     <TouchableOpacity style={styles.grabOffer}>
@@ -143,9 +152,12 @@ const HomeScreen = ({ navigation }) => {
                         />
                     </View>
                 </ScrollView>
+
+                {/* Modal for profile update */}
+               
             </SafeAreaView>
-            <BottomTabBar 
-                navigation={navigation} 
+            <BottomTabBar
+                navigation={navigation}
                 currentScreen={currentScreen}
                 onNavigate={handleNavigation}
             />
@@ -213,6 +225,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         marginTop: 20,
     },
+    
     headingLeft: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -294,7 +307,16 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3, 
-    }
+    },
+
+    welcome:{
+        fontWeight: 'bold',
+        fontSize: 20,
+        marginBottom: 5,
+        marginTop: 5,
+        color: '#1d61e7',
+    },
+    
 });
 
 export default HomeScreen;

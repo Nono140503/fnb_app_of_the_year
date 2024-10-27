@@ -2,7 +2,6 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-
 function BottomTabBar({ navigation, currentScreen }) {
     const defaultColor = 'grey';
     const activeColor = '#1d61e7';
@@ -13,46 +12,70 @@ function BottomTabBar({ navigation, currentScreen }) {
                 onPress={() => navigation.navigate('Home Screen')}
                 style={styles.iconContainer}
             >
-                <Icon 
-                    name='home' 
-                    size={25} 
-                    color={currentScreen === 'Home Screen' ? activeColor : defaultColor} 
+                <Icon
+                    name='home'
+                    size={25}
+                    color={currentScreen === 'Home Screen' ? activeColor : defaultColor}
                 />
-                <Text style={{ color: currentScreen === 'Home Screen' ? activeColor : defaultColor }} >Home</Text>
+                <Text style={{ color: currentScreen === 'Home Screen' ? activeColor : defaultColor }} >
+                    Home
+                </Text>
             </TouchableOpacity>
-           
+
             <TouchableOpacity
-                onPress={() => navigation.navigate('Pay & Buy')}
+                onPress={() => navigation.navigate('Inventory Scan')}
                 style={styles.iconContainer}
             >
-                <Icon 
-                    name='cash-outline' 
-                    size={25} 
-                    color={currentScreen === 'Pay & Buy' ? activeColor : defaultColor} 
+                <Icon
+                    name='camera-outline'
+                    size={25}
+                    color={currentScreen === 'Inventory Scan' ? activeColor : defaultColor}
                 />
-                <Text style={{ color: currentScreen === 'Pay & Buy' ? activeColor : defaultColor }}>Pay & Buy</Text>
+                <Text style={{ color: currentScreen === 'Inventory Scan' ? activeColor : defaultColor }}>
+                    Inventory Scan
+                </Text>
             </TouchableOpacity>
+
             <TouchableOpacity
                 onPress={() => navigation.navigate('Invoices')}
                 style={styles.iconContainer}
             >
-                <Icon 
-                    name='receipt-outline' 
-                    size={25} 
-                    color={currentScreen === 'Invoices' ? activeColor : defaultColor} 
+                <Icon
+                    name='receipt-outline'
+                    size={25}
+                    color={currentScreen === 'Invoices' ? activeColor : defaultColor}
                 />
-                <Text style={{ color: currentScreen === 'Invoices' ? activeColor : defaultColor }}>Invoice</Text>
+                <Text style={{ color: currentScreen === 'Invoices' ? activeColor : defaultColor }}>
+                    Invoice
+                </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+                onPress={() => navigation.navigate('Financial Essentials')}
+                style={styles.iconContainer}
+            >
+                <Icon
+                    name='book-outline'
+                    size={25}
+                    color={currentScreen === 'Financial Essentials' ? activeColor : defaultColor}
+                />
+                <Text style={{ color: currentScreen === 'Financial Essentials' ? activeColor : defaultColor }}>
+                    Financial Essentials
+                </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
                 onPress={() => navigation.navigate('Settings')}
                 style={styles.iconContainer}
             >
-                <Icon 
-                    name='cog-outline' 
-                    size={27} 
-                    color={currentScreen === 'Settings' ? activeColor : defaultColor} 
+                <Icon
+                    name='cog-outline'
+                    size={27}
+                    color={currentScreen === 'Settings' ? activeColor : defaultColor}
                 />
-                <Text style={{ color: currentScreen === 'Settings' ? activeColor : defaultColor }}>Settings</Text>
+                <Text style={{ color: currentScreen === 'Settings' ? activeColor : defaultColor }}>
+                    Settings
+                </Text>
             </TouchableOpacity>
         </View>
     );
@@ -69,7 +92,6 @@ const styles = StyleSheet.create({
         bottom: 0,
         width: '100%',
         backgroundColor: 'white',
-    
     },
     iconContainer: {
         padding: 10,

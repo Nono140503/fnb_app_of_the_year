@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Image, StyleSheet, TouchableOpacity, Text, Alert, Platform, ScrollView } from 'react-native';
+import { View, TextInput, Button, Image, StyleSheet, TouchableOpacity, Text, Alert, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { db, auth } from '../../firebase'; // Ensure both firestore and auth are imported
+import { db, auth } from '../../firebase';
 import { collection, addDoc, getDoc, doc } from 'firebase/firestore';
 
 const CreatePostScreen = ({ navigation }) => {
@@ -10,7 +10,7 @@ const CreatePostScreen = ({ navigation }) => {
     const [content, setContent] = useState('');
     const [imageUri, setImageUri] = useState(null);
     const [permissionGranted, setPermissionGranted] = useState(false);
-    const [currentUser, setCurrentUser] = useState(null); // State to hold current user data
+    const [currentUser, setCurrentUser] = useState(null);
 
     useEffect(() => {
         const fetchCurrentUser = async () => {
@@ -65,7 +65,6 @@ const CreatePostScreen = ({ navigation }) => {
             return;
         }
 
-        // Ensure currentUser is available
         if (!currentUser) {
             Alert.alert('Error', 'User not found.');
             return;
@@ -74,9 +73,9 @@ const CreatePostScreen = ({ navigation }) => {
         const newBlog = {
             title,
             content,
-            author: currentUser.name, // Use the current user's name
-            userId: currentUser.userId, // Use the current user's userId
-            profileImage: currentUser.profileImage, // Use current user's profile image
+            author: currentUser.name,
+            userId: currentUser.userId,
+            profileImage: currentUser.profileImage,
             time: new Date().toLocaleString(),
             image: imageUri || null,
             likes: 0,
@@ -84,7 +83,7 @@ const CreatePostScreen = ({ navigation }) => {
         };
         
         try {
-            await addDoc(collection(db, 'blogs'), newBlog); // Save to Firestore
+            await addDoc(collection(db, 'blogs'), newBlog);
             navigation.goBack();
         } catch (error) {
             console.error("Error adding post: ", error);
@@ -97,44 +96,46 @@ const CreatePostScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={handleBack}>
-                    <Ionicons name="arrow-back-outline" size={24} />
-                </TouchableOpacity>
-                <Text style={styles.title}>Create a Post</Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={handleBack}>
+                        <Ionicons name="arrow-back-outline" size={24} />
+                    </TouchableOpacity>
+                    <Text style={styles.title}>Create a Post</Text>
+                </View>
+                <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Title"
+                        value={title}
+                        onChangeText={setTitle}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="What's on your mind?"
+                        value={content}
+                        onChangeText={setContent}
+                        multiline
+                        numberOfLines={4}
+                    />
+                    <Image 
+                        source={imageUri ? { uri: imageUri } : require('../../assets/pngtree-vector-new-post-neon-sign-effect-png-image_3605555-removebg-preview.png')} 
+                        style={styles.image} 
+                    />
+                    <TouchableOpacity style={styles.imageButton} onPress={openGallery}>
+                        <Text style={styles.imageButtonText}>Pick an Image</Text>
+                    </TouchableOpacity>
+                    <Button title="Post" onPress={handleCreatePost} />
+                </ScrollView>
             </View>
-            <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Title"
-                    value={title}
-                    onChangeText={setTitle} // Update title state on text change
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="What's on your mind?"
-                    value={content}
-                    onChangeText={setContent}
-                    multiline
-                    numberOfLines={4}
-                />
-                <Image 
-                    source={imageUri ? { uri: imageUri } : require('../../assets/pngtree-vector-new-post-neon-sign-effect-png-image_3605555-removebg-preview.png')} 
-                    style={styles.image} 
-                />
-                <TouchableOpacity style={styles.imageButton} onPress={openGallery}>
-                    <Text style={styles.imageButtonText}>Pick an Image</Text>
-                </TouchableOpacity>
-                <Button title="Post" onPress={handleCreatePost} />
-            </ScrollView>
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 
 
 const styles = StyleSheet.create({
-    // Styles remain unchanged as requested
+
     container: { 
         flex: 1, 
         padding: 20,

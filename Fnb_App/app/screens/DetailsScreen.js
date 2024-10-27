@@ -12,40 +12,7 @@ export default function DetailsScreen({ route }) {
   const [subtotal, setSubtotal] = useState(0);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState(0);
-  const sendEmail = async (email, subject, pdfLink) => {
-    const apiKey = 'YOUR_SENDGRID_API_KEY';
-    const url = 'https://api.sendgrid.com/v3/mail/send';
-
-    const data = {
-        personalizations: [{
-            to: [{ email }],
-            subject,
-        }],
-        from: { email: 'your_email@example.com' }, // Verified sender
-        content: [{
-            type: 'text/plain',
-            value: 'Please find your invoice attached.',
-        }],
-        attachments: [{
-            content: pdfLink, // URL of the PDF
-            type: 'application/pdf',
-            filename: 'invoice.pdf',
-            disposition: 'attachment',
-        }],
-    };
-
-    try {
-        await axios.post(url, data, {
-            headers: {
-                Authorization: `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        console.log('Email sent successfully!');
-    } catch (error) {
-        console.error('Error sending email:', error);
-    }
-};
+  
 
   useEffect(() => {
     const readFileContent = async () => {

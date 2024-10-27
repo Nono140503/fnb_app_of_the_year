@@ -196,91 +196,139 @@ const getFaqContent = () => [
 ];
 
 const getTopicDescription = (topic) => {
-  switch (topic) {
-    case "Cash Flow":
-      return `Cash flow is the lifeblood of any business. It represents the net amount of cash coming in and going out of your business over a specific period. 
-            **Tips for Managing Cash Flow:**
-            - **Monitor Cash Flow Daily:** Keep track of your income and expenses.
-            - **Invoice Promptly:** Ensure customers are invoiced immediately after service or product delivery to avoid delays.
-            - **Negotiate Payment Terms:** Work with suppliers to extend payment deadlines.
-            - **Use Cash Flow Forecasting Tools:** Plan for future cash needs.
-            - **Consider Invoice Factoring:** Use factoring to get immediate cash for unpaid invoices.`;
-
-    case "Expense Management":
-      return `Expense management involves keeping business expenses in check while optimizing resources.
-            **Tips for Managing Expenses:**
-            - **Create a Budget:** Set a budget and stick to it for better control over expenses.
-            - **Review Regularly:** Evaluate business expenses periodically and identify areas to cut costs.
-            - **Negotiate with Suppliers:** Secure better prices or payment terms.
-            - **Use Expense Tracking Apps:** Monitor business spending in real-time.
-            - **Automate Payments:** Avoid late payment penalties with automated systems.`;
-
-    case "Stock Tracking Tools":
-      return `Managing inventory is critical for businesses to avoid both stock shortages and overstocking.
-            **Benefits of Stock Tracking Tools:**
-            - **Real-Time Monitoring:** Track stock levels continuously to avoid running out of key items.
-            - **Reduce Theft and Loss:** Monitor inventory movements and reduce theft risks.
-            - **Forecast Demand:** Use historical data to predict future stock needs.
-            - **Use Just-in-Time (JIT) Inventory:** Minimize holding costs by stocking only what is needed.
-            - **Set Low-Stock Alerts:** Get notifications when stock is running low.`;
-
-    case "Digital Payments":
-      return `Digital payments offer a secure, fast, and efficient way to conduct business transactions.
-            **Advantages of Digital Payments:**
-            - **Improved Cash Flow:** Payments are received faster compared to traditional methods.
-            - **Enhanced Security:** Minimize theft and fraud risks by reducing cash handling.
-            - **Convenience for Customers:** Provide multiple payment options, such as cards, mobile wallets, and EFTs.
-            - **Better Financial Record-Keeping:** Maintain transaction records automatically.
-            - **Access to Financing:** Build credit history by using digital platforms.`;
-
-    case "Invoices":
-      return `Creating professional invoices ensures prompt payments and improves customer relationships.
-            **Tips for Creating Effective Invoices:**
-            - **Clear Payment Terms:** Include due dates and payment terms.
-            - **Automate Invoicing:** Use software tools to send invoices quickly.
-            - **Provide Multiple Payment Options:** Make it easy for customers to pay.
-            - **Follow Up on Unpaid Invoices:** Implement reminder systems.
-            - **Integrate with Accounting Tools:** Sync invoices with accounting software for seamless management.`;
-
-    case "Supplier Orders":
-      return `Efficient supplier management ensures smooth business operations.
-            **Best Practices for Managing Supplier Orders:**
-            - **Maintain Strong Relationships:** Work closely with suppliers to get better terms.
-            - **Order in Advance:** Avoid last-minute stockouts by planning ahead.
-            - **Track Order Status:** Use software to monitor supplier order status.
-            - **Negotiate Discounts:** Seek bulk discounts or better payment terms.
-            - **Maintain Safety Stock:** Always keep a buffer stock for emergencies.`;
-
-    case "Loans":
-      return `Accessing loans can help businesses grow by providing needed capital.
-            **Types of Loans for Small Businesses:**
-            - **Microfinance Loans:** Designed for small businesses in informal sectors.
-            - **Working Capital Loans:** To manage daily operational expenses.
-            - **Asset Financing:** Use assets as collateral for loans.
-            - **Overdraft Facilities:** Flexible borrowing options linked to your bank account.
-            **Tips for Getting Loans:**
-            - **Understand Loan Terms:** Read and understand loan agreements before committing.
-            - **Maintain Good Credit:** Build a positive credit history.
-            - **Explore Government Programs:** Look for government-backed loans or grants.`;
-
-    case "Interest Rates":
-      return `Interest rates determine the cost of borrowing and play a key role in financial planning.
-            **Understanding Interest Rates:**
-            - **Fixed vs. Variable Rates:** Know whether the rate is fixed or will fluctuate.
-            - **APR (Annual Percentage Rate):** This reflects the total borrowing cost, including fees.
-            - **Impact on Cash Flow:** Higher interest rates increase loan repayment amounts.
-            - **Compare Lenders:** Shop around for the best interest rates.
-            - **Factor in Loan Tenure:** The longer the loan term, the higher the total interest paid.`;
-
-    default:
-      return "No information available.";
-  }
-};
+    switch (topic) {
+      case "Cash Flow":
+        return (
+          <>
+            <Text style={styles.topicText}>
+              Cash flow is the lifeblood of any business. It represents the net amount of cash coming in and going out of your business over a specific period.
+            </Text>
+            <Text style={styles.topicSubTitle}>Tips for Managing Cash Flow:</Text>
+            <Text style={styles.topicBullet}>• Monitor Cash Flow Daily: Keep track of your income and expenses.</Text>
+            <Text style={styles.topicBullet}>• Invoice Promptly: Ensure customers are invoiced immediately after service or product delivery to avoid delays.</Text>
+            <Text style={styles.topicBullet}>• Negotiate Payment Terms: Work with suppliers to extend payment deadlines.</Text>
+            <Text style={styles.topicBullet}>• Use Cash Flow Forecasting Tools: Plan for future cash needs.</Text>
+            <Text style={styles.topicBullet}>• Consider Invoice Factoring: Use factoring to get immediate cash for unpaid invoices.</Text>
+          </>
+        );
+  
+      case "Expense Management":
+        return (
+          <>
+            <Text style={styles.topicText}>
+              Expense management involves keeping business expenses in check while optimizing resources.
+            </Text>
+            <Text style={styles.topicSubTitle}>Tips for Managing Expenses:</Text>
+            <Text style={styles.topicBullet}>• Create a Budget: Set a budget and stick to it for better control over expenses.</Text>
+            <Text style={styles.topicBullet}>• Review Regularly: Evaluate business expenses periodically and identify areas to cut costs.</Text>
+            <Text style={styles.topicBullet}>• Negotiate with Suppliers: Secure better prices or payment terms.</Text>
+            <Text style={styles.topicBullet}>• Use Expense Tracking Apps: Monitor business spending in real-time.</Text>
+            <Text style={styles.topicBullet}>• Automate Payments: Avoid late payment penalties with automated systems.</Text>
+          </>
+        );
+  
+      case "Stock Tracking Tools":
+        return (
+          <>
+            <Text style={styles.topicText}>
+              Managing inventory is critical for businesses to avoid both stock shortages and overstocking.
+            </Text>
+            <Text style={styles.topicSubTitle}>Benefits of Stock Tracking Tools:</Text>
+            <Text style={styles.topicBullet}>• Real-Time Monitoring: Track stock levels continuously to avoid running out of key items.</Text>
+            <Text style={styles.topicBullet}>• Reduce Theft and Loss: Monitor inventory movements and reduce theft risks.</Text>
+            <Text style={styles.topicBullet}>• Forecast Demand: Use historical data to predict future stock needs.</Text>
+            <Text style={styles.topicBullet}>• Use Just-in-Time (JIT) Inventory: Minimize holding costs by stocking only what is needed.</Text>
+            <Text style={styles.topicBullet}>• Set Low-Stock Alerts: Get notifications when stock is running low.</Text>
+          </>
+        );
+  
+      case "Digital Payments":
+        return (
+          <>
+            <Text style={styles.topicText}>
+              Digital payments offer a secure, fast, and efficient way to conduct business transactions.
+            </Text>
+            <Text style={styles.topicSubTitle}>Advantages of Digital Payments:</Text>
+            <Text style={styles.topicBullet}>• Improved Cash Flow: Payments are received faster compared to traditional methods.</Text>
+            <Text style={styles.topicBullet}>• Enhanced Security: Minimize theft and fraud risks by reducing cash handling.</Text>
+            <Text style={styles.topicBullet}>• Convenience for Customers: Provide multiple payment options, such as cards, mobile wallets, and EFTs.</Text>
+            <Text style={styles.topicBullet}>• Better Financial Record-Keeping: Maintain transaction records automatically.</Text>
+            <Text style={styles.topicBullet}>• Access to Financing: Build credit history by using digital platforms.</Text>
+          </>
+        );
+  
+      case "Invoices":
+        return (
+          <>
+            <Text style={styles.topicText}>
+              Creating professional invoices ensures prompt payments and improves customer relationships.
+            </Text>
+            <Text style={styles.topicSubTitle}>Tips for Creating Effective Invoices:</Text>
+            <Text style={styles.topicBullet}>• Clear Payment Terms: Include due dates and payment terms.</Text>
+            <Text style={styles.topicBullet}>• Automate Invoicing: Use software tools to send invoices quickly.</Text>
+            <Text style={styles.topicBullet}>• Provide Multiple Payment Options: Make it easy for customers to pay.</Text>
+            <Text style={styles.topicBullet}>• Follow Up on Unpaid Invoices: Implement reminder systems.</Text>
+            <Text style={styles.topicBullet}>• Integrate with Accounting Tools: Sync invoices with accounting software for seamless management.</Text>
+          </>
+        );
+  
+      case "Supplier Orders":
+        return (
+          <>
+            <Text style={styles.topicText}>
+              Efficient supplier management ensures smooth business operations.
+            </Text>
+            <Text style={styles.topicSubTitle}>Best Practices for Managing Supplier Orders:</Text>
+            <Text style={styles.topicBullet}>• Maintain Strong Relationships: Work closely with suppliers to get better terms.</Text>
+            <Text style={styles.topicBullet}>• Order in Advance: Avoid last-minute stockouts by planning ahead.</Text>
+            <Text style={styles.topicBullet}>• Track Order Status: Use software to monitor supplier order status.</Text>
+            <Text style={styles.topicBullet}>• Negotiate Discounts: Seek bulk discounts or better payment terms.</Text>
+            <Text style={styles.topicBullet}>• Maintain Safety Stock: Always keep a buffer stock for emergencies.</Text>
+          </>
+        );
+  
+      case "Loans":
+        return (
+          <>
+            <Text style={styles.topicText}>
+              Accessing loans can help businesses grow by providing needed capital.
+            </Text>
+            <Text style={styles.topicSubTitle}>Types of Loans for Small Businesses:</Text>
+            <Text style={styles.topicBullet}>• Microfinance Loans: Designed for small businesses in informal sectors.</Text>
+            <Text style={styles.topicBullet}>• Working Capital Loans: To manage daily operational expenses.</Text>
+            <Text style={styles.topicBullet}>• Asset Financing: Use assets as collateral for loans.</Text>
+            <Text style={styles.topicBullet}>• Overdraft Facilities: Flexible borrowing options linked to your bank account.</Text>
+            <Text style={styles.topicBullet}>Tips for Getting Loans:</Text>
+            <Text style={styles.topicBullet}>• Understand Loan Terms: Read and understand loan agreements before committing.</Text>
+            <Text style={styles.topicBullet}>• Maintain Good Credit: Build a positive credit history.</Text>
+            <Text style={styles.topicBullet}>• Explore Government Programs: Look for government-backed loans or grants.</Text>
+          </>
+        );
+  
+      case "Interest Rates":
+        return (
+          <>
+            <Text style={styles.topicText}>
+              Interest rates determine the cost of borrowing and play a key role in financial planning.
+            </Text>
+            <Text style={styles.topicSubTitle}>Understanding Interest Rates:</Text>
+            <Text style={styles.topicBullet}>• Fixed vs. Variable Rates: Know whether the rate is fixed or will fluctuate.</Text>
+            <Text style={styles.topicBullet}>• APR (Annual Percentage Rate): This reflects the total borrowing cost, including fees.</Text>
+            <Text style={styles.topicBullet}>• Impact on Cash Flow: Higher interest rates increase loan repayment amounts.</Text>
+            <Text style={styles.topicBullet}>• Compare Lenders: Shop around for the best interest rates.</Text>
+            <Text style={styles.topicBullet}>• Factor in Loan Tenure: The longer the loan term, the higher the total interest paid.</Text>
+          </>
+        );
+  
+      default:
+        return <Text style={styles.topicText}>No information available.</Text>;
+    }
+  };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#f6f7f9",
     paddingHorizontal: 20,
   },
   header: {
@@ -288,6 +336,23 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     
     marginTop: 45,
+  },
+  topicText: {
+    fontSize: 16,
+    marginBottom: 15, // Increase bottom margin for more spacing
+    lineHeight: 24,   // Adjust line height for better readability
+  },
+  topicSubTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 10, // Add vertical margin for spacing
+  },
+  topicBullet: {
+    fontSize: 16,
+    marginVertical: 5, // Increase vertical margin for better spacing
+    lineHeight: 20,     // Adjust line height for readability
+    marginLeft: 10,     // Indent bullet points
+    paddingVertical: 2, // Additional padding for spacing
   },
   headerTitle: {
     fontSize: 20,
@@ -305,6 +370,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    
   },
   card: {
     width: "48%",
@@ -312,6 +378,11 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   modalContainer: {
     flex: 1,
@@ -360,7 +431,9 @@ const styles = StyleSheet.create({
   faqButton: { 
     backgroundColor: "#1d61e7", 
     padding: 15, 
-    borderRadius: 8 
+    borderRadius: 8,
+    width: '50%' ,
+    alignItems: 'center',
 },
   footerButtonText: { 
     color: "white", 

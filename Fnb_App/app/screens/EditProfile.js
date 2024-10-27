@@ -7,7 +7,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth } from '../../firebase'; // Import auth to get current user
 
-const EditProfileScreen = () => {
+const EditProfileScreen = ({navigation}) => {
     const [name, setName] = useState('');
     const email = auth.currentUser?.email; // Get the logged-in user's email
     const [phone, setPhone] = useState('');
@@ -62,6 +62,7 @@ const EditProfileScreen = () => {
                 await uploadBytes(storageRef, blob);
                 // Get the download URL of the uploaded image
                 imageUrl = await getDownloadURL(storageRef);
+
             } catch (error) {
                 Alert.alert('Error', 'Failed to upload image: ' + error.message);
                 return; // Exit if image upload fails
@@ -77,6 +78,8 @@ const EditProfileScreen = () => {
                 profileImage: imageUrl || null, // Set imageUrl if image was uploaded
             });
             Alert.alert('Success', 'Profile updated successfully');
+            navigation.navigate('Home Screen');
+            
         } catch (error) {
             Alert.alert('Error', 'Failed to update profile: ' + error.message);
         }

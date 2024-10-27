@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Invoice</title>
     <style>
         body {
@@ -11,11 +12,11 @@
             color: #333;
         }
         h1 {
-            text-align: center;
-            color: #4CAF50;
+            margin-right: 23em;
+            color: #1d61e7;
         }
         h2 {
-            border-bottom: 2px solid #4CAF50;
+            border-bottom: 2px solid #1d61e7;
             padding-bottom: 10px;
         }
         .invoice-section {
@@ -32,18 +33,41 @@
             text-align: left;
         }
         .item-table th {
-            background-color: #4CAF50;
+            background-color: #1d61e7;
             color: white;
         }
         .totals {
             font-size: 18px;
             font-weight: bold;
         }
+        .invoice-info {
+            margin-bottom: 20px;
+        }
+        .header{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .totals{
+            text-align: right;
+        }
+        img{
+            border-radius: 50px;
+        }
     </style>
 </head>
 <body>
-    <h1>Invoice</h1>
+    <div class="header">
+        <img src="./assets/logo3.png" width="100" height="100"/>
+        <h1>Invoice</h1>
+    </div>
     
+
+    <div class="invoice-info">
+        <p><strong>Invoice Number:</strong> INV-123456</p>
+        <p><strong>Customer Name:</strong> John Doe</p>
+    </div>
+
     <div class="invoice-section">
         <h2>Items</h2>
         <table class="item-table">
@@ -62,7 +86,7 @@
             <!-- Add more rows as needed -->
         </table>
     </div>
-    
+
     <div class="invoice-section totals">
         <p>Subtotal: R0.00</p>
         <p>Tax (15%): R0.00</p>

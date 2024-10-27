@@ -1,13 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import * as Print from 'expo-print';
+import axios from 'axios';
+
 
 export default function DetailsScreen({ route }) {
   const { fileUri } = route.params;
   const [fileContent, setFileContent] = useState(null);
-  const [subtotal, setSubtotal] = useState(0); 
-  const [tax, setTax] = useState(0); 
+  const [customerName, setCustomerName] = useState('');
+  const [subtotal, setSubtotal] = useState(0);
+  const [tax, setTax] = useState(0);
   const [total, setTotal] = useState(0);
+  const sendEmail = async (email, subject, pdfLink) => {
+    const apiKey = 'YOUR_SENDGRID_API_KEY';
+    const url = 'https://api.sendgrid.com/v3/mail/send';
+
+    const data = {
+        personalizations: [{
+            to: [{ email }],
+            subject,
+        }],
+        from: { email: 'your_email@example.com' }, // Verified sender
+        content: [{
+            type: 'text/plain',
+            value: 'Please find your invoice attached.',
+        }],
+        attachments: [{
+            content: pdfLink, // URL of the PDF
+            type: 'application/pdf',
+            filename: 'invoice.pdf',
+            disposition: 'attachment',
+        }],
+    };
+
+    try {
+        await axios.post(url, data, {
+            headers: {
+                Authorization: `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log('Email sent successfully!');
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
+};
 
   useEffect(() => {
     const readFileContent = async () => {
@@ -16,8 +54,6 @@ export default function DetailsScreen({ route }) {
           encoding: FileSystem.EncodingType.UTF8,
         });
         setFileContent(content);
-        
-        // Extract numbers and calculate subtotal
         calculateSubtotal(content);
       } catch (err) {
         console.error("Error reading file: ", err);
@@ -31,68 +67,156 @@ export default function DetailsScreen({ route }) {
   }, [fileUri]);
 
   const calculateSubtotal = (content) => {
-    const lines = content.split('\n'); // Split content into lines
-    let subtotalValue = 0; // Initialize subtotal value
+    const lines = content.split('\n');
+    let subtotalValue = 0;
 
-    let quantity = 0; // Variable to hold quantity
-    let price = 0; // Variable to hold price
+    // Extract customer name from the first line only if it exists
+    const customerNameMatch = lines[0].match(/Customer Name:\s*(.*)/);
+    if (customerNameMatch) {
+      setCustomerName(customerNameMatch[1].trim());
+    }
+
+    let quantity = 0;
+    let price = 0;
 
     lines.forEach(line => {
-      // Match Quantity line
       const quantityMatch = line.match(/Quantity:\s*(\d+)/);
       if (quantityMatch) {
-        quantity = parseInt(quantityMatch[1], 10); // Extract quantity
+        quantity = parseInt(quantityMatch[1], 10);
       }
 
-      // Match Price line
       const priceMatch = line.match(/Price per Unit:\s*R(\d+(\.\d{1,2})?)/);
       if (priceMatch) {
-        price = parseFloat(priceMatch[1]); // Extract price
+        price = parseFloat(priceMatch[1]);
       }
 
-      // If both quantity and price have been found, calculate the subtotal for that product
       if (quantity && price) {
-        subtotalValue += price * quantity; // Update subtotal
-        quantity = 0; // Reset quantity for the next product
-        price = 0; // Reset price for the next product
+        subtotalValue += price * quantity;
+        quantity = 0;
+        price = 0;
       }
     });
 
-    setSubtotal(subtotalValue); // Update subtotal state
-    
-    const taxValue = subtotalValue * 0.15; // Calculate 15% tax
-    setTax(taxValue); // Update tax state
-
-    const totalValue = subtotalValue + taxValue; // Calculate total
-    setTotal(totalValue); // Update total state
+    setSubtotal(subtotalValue);
+    const taxValue = subtotalValue * 0.15;
+    setTax(taxValue);
+    const totalValue = subtotalValue + taxValue;
+    setTotal(totalValue);
   };
 
-  // Function to render the content with styling
   const renderContent = (content) => {
-    const products = content.split(/Product: /).filter(Boolean); // Split into products
+    const products = content.split(/Product: /).filter(Boolean);
     return products.map((product, index) => {
-      const lines = product.split('\n'); // Split each product into lines
+      const lines = product.split('\n');
       return (
         <View key={index} style={styles.productContainer}>
           <Text style={styles.productTitle}>{lines[0].trim()}</Text>
           {lines.slice(1).map((line, lineIndex) => (
-            <Text key={lineIndex} style={styles.productText}>{line.trim()}</Text>
+            !line.includes('Customer Name:') && (  // Remove customer name from items display
+              <Text key={lineIndex} style={styles.productText}>{line.trim()}</Text>
+            )
           ))}
         </View>
       );
     });
   };
 
+  const createPDF = async () => {
+    const invoiceHTML = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Invoice</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                color: #333;
+            }
+            h1 {
+                color: #1d61e7;
+                text-align: center;
+            }
+            h2 {
+                border-bottom: 2px solid #1d61e7;
+                padding-bottom: 10px;
+            }
+            .invoice-section {
+                margin-bottom: 20px;
+            }
+            .item-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            .item-table th, .item-table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+            .item-table th {
+                background-color: #1d61e7;
+                color: white;
+            }
+            .totals {
+                font-size: 18px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Invoice</h1>
+        <div>
+            <p><strong>Invoice Number:</strong> INV-123456</p>
+            <p><strong>Customer Name:</strong> ${customerName}</p>
+        </div>
+        <div class="invoice-section">
+            <h2>Items</h2>
+            <table class="item-table">
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                ${fileContent.split(/Product: /).filter(Boolean).map(product => {
+                  const lines = product.split('\n');
+                  const itemName = lines[0].trim();
+                  const quantityMatch = lines.find(line => line.includes('Quantity:'));
+                  const priceMatch = lines.find(line => line.includes('Price per Unit:'));
+                  const quantity = quantityMatch ? quantityMatch.split(':')[1].trim() : '0';
+                  const price = priceMatch ? priceMatch.split(':')[1].trim() : 'R0.00';
+                  return `<tr><td>${itemName}</td><td>${quantity}</td><td>${price}</td></tr>`;
+                }).join('')}
+            </table>
+        </div>
+        <div class="totals">
+            <p>Subtotal: R${subtotal.toFixed(2)}</p>
+            <p>Tax (15%): R${tax.toFixed(2)}</p>
+            <p>Total: R${total.toFixed(2)}</p>
+        </div>
+    </body>
+    </html>
+    `;
+
+    try {
+      const { uri } = await Print.printToFileAsync({ html: invoiceHTML });
+      Alert.alert('PDF Generated', `PDF saved at: ${uri}`);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Failed to create PDF.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Item(s)</Text>
       <View style={styles.items}>
-        <View style={styles.items_cont}>
-            <View style={styles.cont}>
-            {fileContent ? renderContent(fileContent) : <Text>Loading...</Text>}
+        <View style={styles.cont}>
+          {fileContent ? renderContent(fileContent) : <Text>Loading...</Text>}
         </View>
-        
-          <View style={styles.subtotal}>
+        <View style={styles.subtotal}>
           <View style={styles.subtotal_items}>
             <Text style={styles.subtotalText}>Subtotal: </Text>
             <Text style={styles.subtotalText}>R{subtotal.toFixed(2)}</Text>
@@ -106,14 +230,14 @@ export default function DetailsScreen({ route }) {
             <Text style={styles.subtotalText}>R{total.toFixed(2)}</Text>
           </View>
         </View>
-        </View>
-        <TouchableOpacity></TouchableOpacity>
-     
+        
       </View>
+      <TouchableOpacity onPress={createPDF} style={styles.downloadButton}>
+          <Text style={styles.downloadButtonText}>Download Invoice</Text>
+        </TouchableOpacity>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -124,7 +248,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
-    borderBottomWidth: 2,  // Set the width of the bottom border
+    borderBottomWidth: 2,
     borderBottomColor: 'white',
   },
   productTitle: {
@@ -155,7 +279,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 10,
   },
-  cont:{
+  cont: {
     padding: 10
   },
   title: {
@@ -165,8 +289,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: 'center',
   },
-  content: {
-    fontSize: 16,
-    color: '#333',
+  customerName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  downloadButton: {
+    backgroundColor: '#1d61e7',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  downloadButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

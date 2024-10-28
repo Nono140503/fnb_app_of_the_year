@@ -13,7 +13,9 @@ export default function DetailsScreen({ route }) {
   const [subtotal, setSubtotal] = useState(0);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState(0);
-
+  const handleBack = () =>{
+    navigation.goBack();
+}
   useEffect(() => {
     const readFileContent = async () => {
       try {
@@ -230,7 +232,11 @@ export default function DetailsScreen({ route }) {
   const filteredFileContent = fileContent ? fileContent.split('\n').filter(line => !line.startsWith("Customer Name:")).join('\n') : '';
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Item(s)</Text>
+      <View style={styles.header}>
+                    <Ionicons name='arrow-back-outline' size={30} onPress={handleBack}/>
+                    <Text style={styles.head}>Item(s)</Text>
+                </View>
+      
       <Text style={styles.name}>Customer Name: {customerName}</Text> 
       <View style={styles.items}>
         <View style={styles.cont}>
@@ -281,6 +287,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  header: {
+    flexDirection: 'row',
+    top: 30,
+},
+head: {
+    fontSize: 22,
+    marginLeft: 50,
+    fontWeight: 'bold',
+},
   subtotal_items: {
     flexDirection: 'row',
     justifyContent: 'space-between'

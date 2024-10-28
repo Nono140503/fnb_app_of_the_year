@@ -24,9 +24,7 @@ const EditProfileScreen = ({navigation}) => {
                     setName(userData.name || '');
                     setPhone(userData.phone || '');
                     setProfileImage(userData.profileImage || null);
-                } else {
-                    Alert.alert('Error', 'User profile does not exist.');
-                }
+                } 
             } else {
                 Alert.alert('Error', 'No user is logged in.');
             }

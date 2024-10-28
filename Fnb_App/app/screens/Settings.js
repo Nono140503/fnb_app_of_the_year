@@ -67,7 +67,7 @@ const ProfileScreen = ({ navigation }) => {
 
         <TouchableOpacity
           style={styles.option}
-          onPress={() => navigation.navigate('BankDetails')}
+          onPress={() => navigation.navigate('Banking Details')}
         >
           <Ionicons name="card-outline" size={20} color="#1E90FF" />
           <Text style={styles.optionText}>Edit Bank Details</Text>

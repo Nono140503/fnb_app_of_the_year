@@ -29,7 +29,7 @@ const LoginScreen = ({ navigation, route }) => {
       navigation.navigate('Home Screen', { userEmail: email });
       
     } catch (error) {
-      Alert.alert('Login Failed', error.message);
+      Alert.alert('Login Failed', 'Incorrect Credentials');
     }
   };
 

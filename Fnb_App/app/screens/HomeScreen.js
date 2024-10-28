@@ -52,7 +52,7 @@ const HomeScreen = ({ navigation, route }) => {
 
     const exploreItems = [
         { id: '1', image: require('../../assets/marketplace.png'), label: 'Market Place',nav: 'Market Place' },
-        { id: '2', image: require('../../assets/compliance.png'), label: 'Compliance Essentials',nav: 'Marketplace' },
+        { id: '2', image: require('../../assets/compliance.png'), label: 'Compliance Essentials',nav: 'Compliance Essentials' },
         { id: '3', image: require('../../assets/Finance.png'), label: 'Financial Essentials',nav: 'Financial Essentials' },
         { id: '4', image: require('../../assets/financial-literacy.png'), label: 'Business Library',nav: 'Marketplace' },
     ];

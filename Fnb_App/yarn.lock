@@ -3636,11 +3636,6 @@ expo-modules-core@1.12.26:
   dependencies:
     invariant "^2.2.4"
 
-expo-permissions@^14.4.0:
-  version "14.4.0"
-  resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-14.4.0.tgz#d7bb2f0026b87e1294ee551969c35306193f4ad3"
-  integrity sha512-oAcnJ7dlZhpBydK73cwomA2xofizayVUz+FW5REl7dMu7MYyeN/3aqhlpZ3mYddrxvG161bqu97MQr01UixUnw==
-
 expo-print@^13.0.1:
   version "13.0.1"
   resolved "https://registry.yarnpkg.com/expo-print/-/expo-print-13.0.1.tgz#2fe419593aa812642f4ad7057928d2e712578e97"
@@ -4345,7 +4340,7 @@ internal-slot@^1.0.7:
     hasown "^2.0.0"
     side-channel "^1.0.4"
 
-invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -6132,6 +6127,14 @@ react-native-vector-icons@^10.2.0:
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-webview@^13.12.3:
+  version "13.12.3"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-13.12.3.tgz#3aa9d2fc982ba2681e56d3e96e22b63a0d929270"
+  integrity sha512-Y1I5YyDYyE7NC96RHLhd2nxh7ymLYOYLTefgx5ixxw2OToQK0ow3OJ+o77QcI1Tuevj5PCxwqC/14ceS/7yPJQ==
+  dependencies:
+    escape-string-regexp "^4.0.0"
+    invariant "2.2.4"
 
 react-native@0.74.5:
   version "0.74.5"

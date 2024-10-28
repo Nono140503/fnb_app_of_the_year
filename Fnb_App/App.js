@@ -16,6 +16,8 @@ import UploadScreen from './app/screens/UploadScreen';
 import DetailsScreen from './app/screens/DetailsScreen';
 import MarketPlaceScreen from './app/screens/MarketPlace';
 import CreateMarketPlacePostScreen from './app/screens/CreateMaketPlacePost';
+import HistoryScreen from './app/screens/HistoryScreen';
+import PDFViewScreen from './app/screens/PdfViewScreen';
 
 const Stack = createStackNavigator();
 
@@ -38,6 +40,8 @@ export default function App() {
         <Stack.Screen name='Details Screen' component={DetailsScreen} options={{headerShown: false}}/>
         <Stack.Screen name='Market Place' component={MarketPlaceScreen} options={{headerShown: false}}/>
         <Stack.Screen name='Create Marketplace Post' component={CreateMarketPlacePostScreen} options={{headerShown: false}}/>
+        <Stack.Screen name='History Screen' component={HistoryScreen} options={{headerShown: false}}/>
+        <Stack.Screen name='Pdf View Screen' component={PDFViewScreen} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
     </AuthProvider>

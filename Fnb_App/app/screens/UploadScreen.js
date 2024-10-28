@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import { storage, db, auth } from '../../firebase'; // Import your Firebase instances
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function UploadScreen({ navigation }) {
   const [fileName, setFileName] = useState(null);
@@ -16,38 +18,56 @@ export default function UploadScreen({ navigation }) {
     try {
       console.log("Opening document picker...");
 
-      // Open file picker
       const res = await DocumentPicker.getDocumentAsync({
-        type: 'text/plain', // Only allow .txt files
+        type: 'text/plain',
       });
 
-      console.log("File picker result:", JSON.stringify(res, null, 2)); // Log the whole response
-
-      // Check if the selection was not canceled and has assets
       if (!res.canceled && res.assets && res.assets.length > 0) {
         const asset = res.assets[0];
-        console.log("File selected:", asset.uri);
-        console.log("File MIME type:", asset.mimeType); // Log the MIME type for debugging
-
-        // Store file name and URI for navigation
         setFileName(asset.name);
         setFileUri(asset.uri);
+
+        // Upload file to Firebase Storage
+        const storageRef = ref(storage, `uploads/${auth.currentUser.uid}/${asset.name}`);
+        const response = await fetch(asset.uri);
+        const blob = await response.blob();
+        
+        // Upload the file
+        await uploadBytes(storageRef, blob);
+        console.log('File uploaded successfully.');
+
+        // Get download URL
+        const downloadURL = await getDownloadURL(storageRef);
+
+        // Save the file metadata in Firestore
+        const fileData = {
+          fileName: asset.name,
+          fileUrl: downloadURL,
+          userId: auth.currentUser.uid,
+          createdAt: new Date(),
+        };
+
+        await setDoc(doc(db, 'uploads', auth.currentUser.uid), fileData);
+        Alert.alert("Success", "File uploaded and saved successfully.");
       } else {
-        console.log("File selection canceled or no assets found");
         Alert.alert("File selection canceled", "Please try uploading a text (.txt) file");
       }
     } catch (err) {
       console.error("Error picking file: ", err);
-      Alert.alert("Error", "An error occurred while picking the file."); 
+      Alert.alert("Error", "An error occurred while picking the file.");
     }
   };
 
   const handleGenerateQuote = () => {
     if (fileUri) {
-      navigation.navigate('Details Screen', { fileUri }); 
+      navigation.navigate('Details Screen', { fileUri });
     } else {
       Alert.alert("No file selected", "Please upload a text (.txt) file first.");
     }
+  };
+
+  const handleViewHistory = () => {
+    navigation.navigate('History Screen');
   };
 
   return (
@@ -63,15 +83,17 @@ export default function UploadScreen({ navigation }) {
         <TouchableOpacity style={styles.uploadButton} onPress={handleFileUpload}>
           <Text style={styles.uploadButtonText}>Upload</Text>
         </TouchableOpacity>
-        
-        
       </View>
       
-            {fileName && <View style={styles.doc}><Text style={styles.fileName}>File: {fileName}</Text></View>}
+      {fileName && <View style={styles.doc}><Text style={styles.fileName}>File: {fileName}</Text></View>}
       
       <TouchableOpacity style={styles.generateButton} onPress={handleGenerateQuote}>
           <Text style={styles.generateButtonText}>Generate Quote</Text>
-        </TouchableOpacity>
+      </TouchableOpacity>
+      
+      <TouchableOpacity style={styles.historyButton} onPress={handleViewHistory}>
+          <Text style={styles.historyButtonText}>View History</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -146,4 +168,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  
+   historyButton: {
+    marginTop: 20,
+    backgroundColor: '#3498db',
+    padding: 15,
+    borderRadius: 5,
+    width: '40%',
+    alignItems: "center"
+  },
+  historyButtonText: {
+    color: '#fff',
+    fontSize: 16,},
 });

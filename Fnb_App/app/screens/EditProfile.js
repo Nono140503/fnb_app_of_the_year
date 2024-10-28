@@ -35,7 +35,19 @@ const EditProfileScreen = ({navigation}) => {
         fetchUserProfile();
     }, [email]);
 
+    const requestMediaLibraryPermissions = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permission required', 'Sorry, we need media library permissions to make this work!');
+            return false;
+        }
+        return true;
+    };
+
     const handleImagePicker = async () => {
+        const hasPermission = await requestMediaLibraryPermissions();
+        if (!hasPermission) return;
+
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,

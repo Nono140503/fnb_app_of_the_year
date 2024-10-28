@@ -35,7 +35,7 @@ const HomeScreen = ({ navigation, route }) => {
     const slideshowItems = [
         { id: '1', image: require('../../assets/slide_1.jpeg') },
         { id: '2', image: require('../../assets/slide_2.jpeg') },
-        { id: '3', image: require('../../assets/rafiki.png') },
+        { id: '3', image: require('../../assets/banner.jpg') },
     ];
 
     const blogs = [

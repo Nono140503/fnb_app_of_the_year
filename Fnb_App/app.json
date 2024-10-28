@@ -1,13 +1,14 @@
 {
   "expo": {
-    "name": "Fnb_App",
-    "slug": "Fnb_App",
+    "name": "Track Flow",
+    "slug": "track-flow",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/TrackFlow_logo.png",
+    "description": "Track Flow helps small businesses efficiently manage stock, streamline supplier relationships, and create professional invoices. Ideal for micro and small enterprises, it offers real-time inventory tracking, low-stock alerts, and integrates seamlessly with WhatsApp for quick quotations and invoices.",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo3-removebg-preview.png",
+      "image": "./assets/TrackFlow_logo-removebg-preview.png",
       "resizeMode": "contain",
       "backgroundColor": "#1d61e7"
     },
@@ -16,21 +17,24 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to upload videos.",
         "NSCameraUsageDescription": "This app needs access to your camera to take videos."
-      }
+      },
+      "bundleIdentifier": "com.nono14.trackflow"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/TrackFlow_logo-removebg-preview.png",
         "backgroundColor": "#1d61e7"
       },
       "permissions": [
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ]
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.nono14.trackflow"
     },
     "web": {
-      "favicon": "./assets/Untitled_design.png"
+      "favicon": "./assets/TrackFlow_logo-removebg-preview.png"
     },
     "plugins": [
       [
@@ -40,6 +44,11 @@
           "cameraPermission": "This app needs access to your camera to take videos."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2cf6c5e7-a577-4f82-a980-439b091517a6"
+      }
+    }
   }
 }

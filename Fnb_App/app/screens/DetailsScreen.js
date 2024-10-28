@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as Print from 'expo-print';
-import axios from 'axios';
-
+import * as Sharing from 'expo-sharing'; // Import Sharing module
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { auth } from '../../firebase'; 
 
 export default function DetailsScreen({ route }) {
   const { fileUri } = route.params;
@@ -12,7 +13,6 @@ export default function DetailsScreen({ route }) {
   const [subtotal, setSubtotal] = useState(0);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState(0);
-  
 
   useEffect(() => {
     const readFileContent = async () => {
@@ -37,7 +37,7 @@ export default function DetailsScreen({ route }) {
     const lines = content.split('\n');
     let subtotalValue = 0;
 
-    // Extract customer name from the first line only if it exists
+    // Extract customer name
     const customerNameMatch = lines[0].match(/Customer Name:\s*(.*)/);
     if (customerNameMatch) {
       setCustomerName(customerNameMatch[1].trim());
@@ -74,21 +74,52 @@ export default function DetailsScreen({ route }) {
   const renderContent = (content) => {
     const products = content.split(/Product: /).filter(Boolean);
     return products.map((product, index) => {
-      const lines = product.split('\n');
+      const lines = product.split('\n').filter(line => line.trim() !== '');
       return (
         <View key={index} style={styles.productContainer}>
           <Text style={styles.productTitle}>{lines[0].trim()}</Text>
-          {lines.slice(1).map((line, lineIndex) => (
-            !line.includes('Customer Name:') && (  // Remove customer name from items display
+          {lines.slice(1).map((line, lineIndex) => {
+            // Only render lines that do not include 'Customer Name:'
+            if (line.startsWith("Customer Name:")) {
+              return null; // Skip customer name
+            }
+            return (
               <Text key={lineIndex} style={styles.productText}>{line.trim()}</Text>
-            )
-          ))}
+            );
+          })}
         </View>
       );
     });
   };
 
   const createPDF = async () => {
+    const lines = fileContent.split('\n');
+    const items = [];
+    let currentProduct = null;
+  
+    lines.forEach(line => {
+      if (line.startsWith("Product:")) {
+        if (currentProduct) {
+          items.push(currentProduct);
+        }
+        currentProduct = { name: line.split("Product: ")[1].trim(), quantity: 0, price: 0 };
+      }
+  
+      const quantityMatch = line.match(/Quantity:\s*(\d+)/);
+      if (quantityMatch && currentProduct) {
+        currentProduct.quantity = parseInt(quantityMatch[1], 10);
+      }
+  
+      const priceMatch = line.match(/Price per Unit:\s*R(\d+(\.\d{1,2})?)/);
+      if (priceMatch && currentProduct) {
+        currentProduct.price = parseFloat(priceMatch[1]);
+      }
+    });
+  
+    if (currentProduct) {
+      items.push(currentProduct);
+    }
+  
     const invoiceHTML = `
     <!DOCTYPE html>
     <html lang="en">
@@ -130,13 +161,14 @@ export default function DetailsScreen({ route }) {
             .totals {
                 font-size: 18px;
                 font-weight: bold;
+                text-align: right;
             }
         </style>
     </head>
     <body>
         <h1>Invoice</h1>
         <div>
-            <p><strong>Invoice Number:</strong> INV-123456</p>
+            <p><strong>Invoice Number:</strong> INV-${Date.now()}</p>
             <p><strong>Customer Name:</strong> ${customerName}</p>
         </div>
         <div class="invoice-section">
@@ -147,15 +179,13 @@ export default function DetailsScreen({ route }) {
                     <th>Quantity</th>
                     <th>Price</th>
                 </tr>
-                ${fileContent.split(/Product: /).filter(Boolean).map(product => {
-                  const lines = product.split('\n');
-                  const itemName = lines[0].trim();
-                  const quantityMatch = lines.find(line => line.includes('Quantity:'));
-                  const priceMatch = lines.find(line => line.includes('Price per Unit:'));
-                  const quantity = quantityMatch ? quantityMatch.split(':')[1].trim() : '0';
-                  const price = priceMatch ? priceMatch.split(':')[1].trim() : 'R0.00';
-                  return `<tr><td>${itemName}</td><td>${quantity}</td><td>${price}</td></tr>`;
-                }).join('')}
+                ${items.map(item => `
+                  <tr>
+                      <td>${item.name}</td>
+                      <td>${item.quantity}</td>
+                      <td>R${item.price.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
             </table>
         </div>
         <div class="totals">
@@ -166,22 +196,45 @@ export default function DetailsScreen({ route }) {
     </body>
     </html>
     `;
-
+  
+   
     try {
       const { uri } = await Print.printToFileAsync({ html: invoiceHTML });
-      Alert.alert('PDF Generated', `PDF saved at: ${uri}`);
+      const uniqueFileName = `invoice_${Date.now()}.pdf`;
+      const fileUri = `${FileSystem.documentDirectory}${uniqueFileName}`;
+      await FileSystem.moveAsync({
+        from: uri,
+        to: fileUri,
+      });
+
+      const userId = auth.currentUser?.uid; // Get the logged-in user ID
+      if (!userId) {
+        Alert.alert('Error', 'User not logged in.');
+        return;
+      }
+      
+      const storage = getStorage();
+      const pdfRef = ref(storage, `invoices/${userId}/${uniqueFileName}`); // Save to user-specific folder
+      const pdfBlob = await (await fetch(fileUri)).blob();
+
+      await uploadBytes(pdfRef, pdfBlob, { contentType: 'application/pdf' });
+
+      Alert.alert('PDF Generated and Uploaded', `PDF saved at: ${fileUri}`);
+      await Sharing.shareAsync(fileUri);
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Failed to create PDF.');
+      Alert.alert('Error', 'Failed to create and upload PDF.');
     }
   };
-
+  
+  const filteredFileContent = fileContent ? fileContent.split('\n').filter(line => !line.startsWith("Customer Name:")).join('\n') : '';
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Item(s)</Text>
+      <Text style={styles.name}>Customer Name: {customerName}</Text> 
       <View style={styles.items}>
         <View style={styles.cont}>
-          {fileContent ? renderContent(fileContent) : <Text>Loading...</Text>}
+        {filteredFileContent ? renderContent(filteredFileContent) : <Text>Loading...</Text>}
         </View>
         <View style={styles.subtotal}>
           <View style={styles.subtotal_items}>
@@ -197,11 +250,10 @@ export default function DetailsScreen({ route }) {
             <Text style={styles.subtotalText}>R{total.toFixed(2)}</Text>
           </View>
         </View>
-        
       </View>
       <TouchableOpacity onPress={createPDF} style={styles.downloadButton}>
-          <Text style={styles.downloadButtonText}>Download Invoice</Text>
-        </TouchableOpacity>
+        <Text style={styles.downloadButtonText}>Download Invoice</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -210,6 +262,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#E0ECFD',
+  },
+  name:{
+    fontSize: 18,
   },
   productContainer: {
     padding: 10,
